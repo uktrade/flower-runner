@@ -1,0 +1,62 @@
+#!/usr/bin/env python
+"""
+Simple script for starting Flower while setting the broker URL.
+
+Flower itself allows you to specify the broker URL via the --broker argument, but does not let you
+specify it in flowerconfig.py. Hence, this script is used rather than flowerconfig.py.
+"""
+
+import os
+from urllib.parse import urlencode
+
+import environ
+import flower.__main__
+
+from utils import create_email_regex
+
+env = environ.Env()
+
+
+def _set_up_auth():
+    basic_auth = env('FLOWER_BASIC_AUTH', default=None)
+    auth_provider = env('FLOWER_AUTH_PROVIDER', default=None)
+    email_whitelist = env.list('EMAIL_WHITELIST', default=None)
+
+    if not basic_auth and not (auth_provider and email_whitelist):
+        raise Exception(
+            f'Authentication was not appropriate configured – please set either '
+            f'FLOWER_AUTH_PROVIDER and EMAIL_WHITELIST, or FLOWER_BASIC_AUTH',
+        )
+
+    if email_whitelist:
+        os.environ['FLOWER_AUTH'] = create_email_regex(email_whitelist)
+
+
+def _get_broker_url():
+    vcap_services = env.json('VCAP_SERVICES', default={})
+
+    if 'redis' in vcap_services:
+        _redis_base_url = vcap_services['redis'][0]['credentials']['uri']
+    else:
+        _redis_base_url = env('REDIS_BASE_URL')
+
+    is_rediss = _redis_base_url.startswith('rediss://')
+    url_args = {'ssl_cert_reqs': 'CERT_REQUIRED'} if is_rediss else {}
+    broker_db = env.int('REDIS_BROKER_DB', default=0)
+
+    return _build_redis_url(_redis_base_url, broker_db, **url_args)
+
+
+def _build_redis_url(base_url, db_number, **query_args):
+    encoded_query_args = urlencode(query_args)
+    return f'{base_url}/{db_number}?{encoded_query_args}'
+
+
+def main():
+    _set_up_auth()
+    os.environ['CELERY_BROKER_URL'] = _get_broker_url()
+    flower.__main__.main()
+
+
+if __name__ == '__main__':
+    main()
