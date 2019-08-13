@@ -1,0 +1,46 @@
+version: 2.1
+
+jobs:
+  build:
+    working_directory: ~/app
+
+    docker:
+      - image: python:3.7
+        environment:
+          PIPENV_CACHE_DIR: ~/cache/pip
+
+    steps:
+      - checkout
+
+      - restore_cache:
+          name: Restore pip cache
+          keys:
+            - v1-flower-{{ checksum "Pipfile.lock" }}
+            - v1-flower-
+          paths:
+            - ~/cache/pip
+
+      - run:
+          name: Install dependencies
+          command: python -m pip install --cache-dir ~/cache/pip pipenv
+
+      - run:
+          name: Install dependencies
+          command: pipenv install --dev
+
+      - save_cache:
+          name: Save pip cache
+          key: v1-flower-{{ checksum "Pipfile.lock" }}
+          paths:
+            - ~/cache/pip
+
+      - run:
+          name: Run tests
+          command: pipenv run python -m pytest
+
+workflows:
+  version: 2
+
+  Default build:
+    jobs:
+      - build
