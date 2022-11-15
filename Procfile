@@ -1,1 +1,1 @@
-web: ./main.py --port=$PORT
+web: ./main.py flower --port=$PORT
