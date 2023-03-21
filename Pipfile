@@ -10,7 +10,7 @@ pytest = "*"
 flower = "*"
 celery = {extras = ["redis"],version = "*"}
 django-environ = "*"
-importlib-metadata = "<5.0.0"
+importlib-metadata = "<7.0.0"
 
 [requires]
 python_version = "3.7"
