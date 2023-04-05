@@ -1,0 +1,23 @@
+version: '3'
+services:
+  celery-redis:
+    image: redis
+    restart: "${DOCKER_RESTART_POLICY:-unless-stopped}"
+    ports:
+      - "127.0.0.1:6379:6379"
+  celery-flower:
+    build:
+      context: .
+      args:
+        - "ENV=${ENV:-prod}"
+    ports:
+      - "127.0.0.1:5555:5555"
+    volumes:
+      - ./:/app/
+    command: [ "./main.py", "flower"]
+    env_file: 
+      - .env
+    restart: "${DOCKER_RESTART_POLICY:-unless-stopped}"
+    stdin_open: true
+    depends_on:
+      - celery-redis
