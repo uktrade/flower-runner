@@ -21,7 +21,8 @@ Note that the broker tab in Flower will not work if using Redis over TLS.
 Run docker
 ```
 docker-compose build
-docker-compose up
+docker-compose up -d
+docker-compose down
 Update pipfile.lock
 docker-compose rm --rm celery-flower pipenv lock 
 ```

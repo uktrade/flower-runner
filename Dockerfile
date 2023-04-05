@@ -13,5 +13,4 @@ RUN pip install pipenv
 COPY . /app/
 
 RUN pipenv install --dev --deploy --system
-COPY . /app/
 RUN python -m pytest
