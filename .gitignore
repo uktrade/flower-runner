@@ -1,3 +1,5 @@
 /.envrc
 /flower
 __pycache__
+
+.env

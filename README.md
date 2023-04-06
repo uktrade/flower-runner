@@ -17,3 +17,12 @@ Authentication **must** be configured using the `FLOWER_AUTH_PROVIDER` or `FLOWE
 If using GitHub or Google authentication, you must also configure an email whitelist using the `EMAIL_WHITELIST` environment variable (and should not use `FLOWER_AUTH`).
 
 Note that the broker tab in Flower will not work if using Redis over TLS.
+
+Run docker
+```
+docker-compose build
+docker-compose up -d
+docker-compose down
+Update pipfile.lock
+docker-compose run --rm celery-flower pipenv lock 
+```
