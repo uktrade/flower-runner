@@ -5,7 +5,7 @@ jobs:
     working_directory: ~/app
 
     docker:
-      - image: python:3.7
+      - image: python:3.8
         environment:
           PIPENV_CACHE_DIR: ~/cache/pip
 

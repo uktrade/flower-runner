@@ -1,4 +1,4 @@
-FROM python:3.7
+FROM python:3.8-buster
 
 ENV PYTHONUNBUFFERED=1
 ENV PYTHONDONTWRITEBYTECODE=1
@@ -12,5 +12,6 @@ RUN pip install pipenv
 
 COPY . /app/
 
+RUN pipenv lock
 RUN pipenv install --dev --deploy --system
 RUN python -m pytest

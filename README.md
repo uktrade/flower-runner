@@ -24,5 +24,5 @@ docker-compose build
 docker-compose up -d
 docker-compose down
 Update pipfile.lock
-docker-compose rm --rm celery-flower pipenv lock 
+docker-compose run --rm celery-flower pipenv lock 
 ```
