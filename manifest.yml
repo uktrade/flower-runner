@@ -1,0 +1,7 @@
+---
+applications:
+  - buildpacks:
+      - python_buildpack
+    - type: web
+      memory: 1G
+    stack: cflinuxfs4
