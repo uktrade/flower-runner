@@ -8,6 +8,7 @@ pytest = "*"
 
 [packages]
 flower = "*"
+sentry-sdk = "*"
 celery = {extras = ["redis"],version = "*"}
 django-environ = "*"
 importlib-metadata = "*"

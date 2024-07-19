@@ -12,6 +12,7 @@ from urllib.parse import urlencode
 
 import environ
 import flower.__main__
+import sentry_sdk
 
 env = environ.Env()
 
@@ -19,6 +20,14 @@ env = environ.Env()
 class ImproperlyConfigured(Exception):
     pass
 
+def init_sentry():
+    if os.environ.get('SENTRY_DSN'):
+        sentry_sdk.init(
+            dsn=env("SENTRY_DSN"),
+            environment=env("SENTRY_ENVIRONMENT"),
+            traces_sample_rate=1.0,
+            integrations=[],
+        )
 
 def create_email_regex(emails):
     if not emails:
@@ -67,6 +76,7 @@ def _build_redis_url(base_url, db_number, **query_args):
 
 
 def main():
+    init_sentry()
     email_whitelist = validate_auth_config_and_get_whitelist()
     if email_whitelist:
         os.environ['FLOWER_AUTH'] = email_whitelist
